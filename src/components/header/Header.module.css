@@ -1,0 +1,18 @@
+.header {
+    display: flex;
+    padding: 0.75rem 1rem;
+    position: sticky;
+    background-color: white;
+    width: 100%;
+    z-index: 2;
+}
+
+.header__left {
+    flex: 1;
+}
+
+.header__right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
