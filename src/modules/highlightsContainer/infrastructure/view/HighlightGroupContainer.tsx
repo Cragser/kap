@@ -1,16 +1,22 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import {AddHighlightType, HighlightType} from "../../../highlights/domain/Highlight";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {
+	DragDropContext, Draggable, DraggableProvided, DraggableStateSnapshot, DraggingStyle,
+	Droppable, DropResult,
+	NotDraggingStyle
+} from "react-beautiful-dnd";
 import HighlightCard from "../../../highlights/infrastructure/view/HighlightCard";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {Typography} from '@mui/material';
+import {Property} from "csstype";
+import UserSelect = Property.UserSelect;
 
 interface HighlightGroupContainerProps {
 	highlights: HighlightType[];
 }
 
-const reorder = (list, startIndex, endIndex) => {
+const reorder = (list: Iterable<unknown> | ArrayLike<unknown>, startIndex: number, endIndex: number) => {
 	const result = Array.from(list);
 	const [removed] = result.splice(startIndex, 1);
 	result.splice(endIndex, 0, removed);
@@ -20,7 +26,7 @@ const reorder = (list, startIndex, endIndex) => {
 /**
  * Moves an item from one list to another list.
  */
-const move = (source, destination, droppableSource, droppableDestination) => {
+const move = (source: Iterable<unknown> | ArrayLike<unknown>, destination: Iterable<unknown> | ArrayLike<unknown>, droppableSource: { index: number; droppableId: string | number; }, droppableDestination: { index: number; droppableId: string | number; }) => {
 	const sourceClone = Array.from(source);
 	const destClone = Array.from(destination);
 	const [removed] = sourceClone.splice(droppableSource.index, 1);
@@ -28,14 +34,16 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 	destClone.splice(droppableDestination.index, 0, removed);
 
 	const result = {};
+	// @ts-ignore
 	result[droppableSource.droppableId] = sourceClone;
+	// @ts-ignore
 	result[droppableDestination.droppableId] = destClone;
 
 	return result;
 };
 const grid = 8;
 
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+const getItemStyle = (isDragging: boolean, draggableStyle: DraggingStyle | NotDraggingStyle | undefined): CSSProperties => ({
 	// some basic styles to make the items look a bit nicer
 	userSelect: "none",
 	// padding: grid * 2,
@@ -55,7 +63,8 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 
-const createItemContainer = (provided, snapshot, item) => (
+// @ts-ignore
+const createItemContainer = (provided: DraggableProvided, snapshot: DraggableStateSnapshot, item: HighlightType) => (
 	<div
 		ref={provided.innerRef}
 		{...provided.draggableProps}
@@ -73,6 +82,7 @@ const createItemContainer = (provided, snapshot, item) => (
 			user={item.user}
 			createdBy={item.user.id}
 			createdByName={item.user.name}
+			groupId={item.groupId}
 		/>
 	</div>
 )
@@ -110,6 +120,7 @@ const HighlightGroupContainer = (
 		// order object alphabetically
 		const groups = Object.keys(groupsInitial).sort().reduce(
 			(obj, key) => {
+				// @ts-ignore
 				obj[key] = groupsInitial[key];
 				return obj;
 			}
@@ -117,8 +128,9 @@ const HighlightGroupContainer = (
 		setState(Object.values(groups));
 	}, [highlights])
 
-	function onDragEnd(result) {
+	function onDragEnd(result: DropResult) {
 		const highlightId = result.draggableId;
+		// @ts-ignore
 		const group = state[result.destination.droppableId][0]
 		const item = highlights.find(highlight => highlight.id === highlightId)
 		if (item) {
@@ -140,12 +152,15 @@ const HighlightGroupContainer = (
 		if (sourceIndex === destinationIndex) {
 			const items = reorder(state[sourceIndex], source.index, destination.index);
 			const newState = [...state];
+			// @ts-ignore
 			newState[sourceIndex] = items;
 			setState(newState);
 		} else {
 			const result = move(state[sourceIndex], state[destinationIndex], source, destination);
 			const newState = [...state];
+			// @ts-ignore
 			newState[sourceIndex] = result[sourceIndex];
+			// @ts-ignore
 			newState[destinationIndex] = result[destinationIndex];
 			setState(newState.filter(group => group.length));
 		}
@@ -177,7 +192,10 @@ const HighlightGroupContainer = (
 												draggableId={item.id}
 												index={index}
 											>
-												{(provided, snapshot) => createItemContainer(provided, snapshot, item)}
+												{(
+													provided,
+													snapshot
+												) => createItemContainer(provided, snapshot, item)}
 											</Draggable>
 										))}
 										{provided.placeholder}

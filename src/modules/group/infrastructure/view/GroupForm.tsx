@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {AddHighlightType, HighlightType} from "../../domain/Group";
 import {Formik, Form, Field, ErrorMessage, useFormik} from 'formik';
-import getRandomHighlightColor from "../util/getRandomHighlightColor";
 import {Button, Paper, TextField} from "@mui/material";
 import * as yup from 'yup';
 import Typography from "@mui/material/Typography";

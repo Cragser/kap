@@ -10,7 +10,6 @@ const ZoomContainer = ({children}: { children: React.ReactNode }) => {
 		{({zoomIn, zoomOut, resetTransform, ...rest}) => (
 			<React.Fragment>
 				<TransformComponent
-					disabled={true}
 					wrapperStyle={{
 						outline: '1px solid red',
 						width: '100%',

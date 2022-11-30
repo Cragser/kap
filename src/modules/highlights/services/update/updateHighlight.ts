@@ -1,8 +1,8 @@
-import {Highlight} from "../../domain/Highlight";
+import {HighlightType} from "../../domain/Highlight";
 import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient()
-const updateHighlight = async (highlight: Partial<Highlight>) => {
+const updateHighlight = async (highlight: Partial<HighlightType>) => {
 	if (highlight.id === undefined)
 		throw new Error("Highlight ID is required");
 

@@ -12,6 +12,7 @@ interface HighlightType {
 	color?: HighlightColor;
 	createdBy: string;
 	createdByName: string;
+	groupId: string;
 	group: {
 		id: string;
 		name: string;

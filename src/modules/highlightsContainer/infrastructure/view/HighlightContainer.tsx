@@ -7,9 +7,6 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useState} from "react";
 import HighlightGroupContainer from "./HighlightGroupContainer";
 
-interface HighlightContainerProps {
-	highlights: HighlightType[];
-}
 
 const getHighlightCards = async (): Promise<HighlightType[]> => {
 	const response = await fetch('/api/highlight');
@@ -18,7 +15,7 @@ const getHighlightCards = async (): Promise<HighlightType[]> => {
 }
 
 
-const HighlightContainer = (props: HighlightContainerProps) => {
+const HighlightContainer = () => {
 	const query = useQuery({queryKey: ['highlights-query'], queryFn: getHighlightCards})
 	if (query.isLoading) {
 		return <div>Loading...</div>
